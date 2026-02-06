@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+temp_ticket.json
+
+# Test and coverage artifacts
+.coverage
+coverage.json
+coverage_html/
+test-results.xml
+test-output.txt
+.pytest_cache/

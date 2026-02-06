@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Tracker - Create Ticket</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover, .nav a.active {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .container h2 {
+            color: #1a1a2e;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2d5a87;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #2d5a87 0%, #1e3a5f 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(45, 90, 135, 0.4);
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+        
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+        
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎫 Ticket Tracker</h1>
+        <p>Simple ticket management for your team</p>
+    </div>
+    
+    <nav class="nav">
+        <a href="index.html" class="active">Create Ticket</a>
+        <a href="board.html">Ticket Board</a>
+    </nav>
+    
+    <div class="container">
+        <h2>Create New Ticket</h2>
+        
+        <div id="message" class="message"></div>
+        
+        <form id="ticketForm">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" placeholder="Enter ticket title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Describe the ticket details" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" name="dueDate" required>
+            </div>
+            
+            <button type="submit" class="btn">Create Ticket</button>
+        </form>
+    </div>
+    
+    <script>
+        // Set minimum date to today
+        document.getElementById('dueDate').min = new Date().toISOString().split('T')[0];
+        
+        document.getElementById('ticketForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const messageDiv = document.getElementById('message');
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                due_date: document.getElementById('dueDate').value,
+                status: 'todo'
+            };
+            
+            try {
+                const response = await fetch('/api/tickets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    messageDiv.textContent = '✅ Ticket created successfully!';
+                    messageDiv.className = 'message success';
+                    this.reset();
+                    document.getElementById('dueDate').min = new Date().toISOString().split('T')[0];
+                } else {
+                    throw new Error('Failed to create ticket');
+                }
+            } catch (error) {
+                messageDiv.textContent = '❌ Error creating ticket. Please try again.';
+                messageDiv.className = 'message error';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+version: v0.1
+testId: autohealing-demo-test
+displayName: Autohealing Demo Load Test
+description: Small-scale load test for the Ticket Tracker application
+testPlan: autohealing-test.jmx
+engineInstances: 1
